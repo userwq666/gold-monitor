@@ -85,10 +85,7 @@ public class CrawlerService {
 
     private JsonNode callPython() throws Exception {
         String baseDir = System.getProperty("user.dir");
-        java.io.File scriptFile = new java.io.File(baseDir, "fetch_sge.py");
-        if (!scriptFile.exists()) {
-            scriptFile = new java.io.File(baseDir, "../fetch_sge.py");
-        }
+        java.io.File scriptFile = new java.io.File(baseDir, "src/main/python/fetch_sge.py");
         log.info("Python脚本路径: {}", scriptFile.getAbsolutePath());
 
         ProcessBuilder pb = new ProcessBuilder("python", scriptFile.getAbsolutePath());
