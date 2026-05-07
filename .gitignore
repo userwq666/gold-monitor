@@ -5,3 +5,4 @@ dist/
 data/
 .idea/
 *.iml
+src/main/resources/static/
