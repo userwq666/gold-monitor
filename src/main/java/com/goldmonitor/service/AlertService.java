@@ -61,6 +61,7 @@ public class AlertService {
         if (rule.getThreshold() == null) return null;
         BigDecimal threshold = rule.getThreshold();
         BigDecimal currentPrice = current.getPrice();
+        String source = current.getSource();
 
         List<GoldPrice> recent = goldPriceRepository.findBySourceAndFetchTimeAfterOrderByFetchTimeAsc(
                 current.getSource(), LocalDateTime.now().minusMinutes(10));
@@ -69,14 +70,14 @@ public class AlertService {
 
         if ("ABOVE".equals(rule.getDirection())) {
             if (prevPrice.compareTo(threshold) < 0 && currentPrice.compareTo(threshold) >= 0) {
-                return String.format("[阈值触发] %s: 金价突破 %.2f 元/克，当前 %.2f 元/克",
-                        rule.getName(), threshold, currentPrice);
+                return String.format("[阈值触发] %s: 金价突破 %.2f 元/克，当前 %.2f 元/克 (%s)",
+                        rule.getName(), threshold, currentPrice, source);
             }
         }
         if ("BELOW".equals(rule.getDirection())) {
             if (prevPrice.compareTo(threshold) > 0 && currentPrice.compareTo(threshold) <= 0) {
-                return String.format("[阈值触发] %s: 金价跌破 %.2f 元/克，当前 %.2f 元/克",
-                        rule.getName(), threshold, currentPrice);
+                return String.format("[阈值触发] %s: 金价跌破 %.2f 元/克，当前 %.2f 元/克 (%s)",
+                        rule.getName(), threshold, currentPrice, source);
             }
         }
         return null;
@@ -84,6 +85,7 @@ public class AlertService {
 
     private String evaluateChange(AlertRule rule, GoldPrice current) {
         if (rule.getThreshold() == null) return null;
+        String source = current.getSource();
         BigDecimal base;
         if (rule.getLastTriggeredPrice() != null) {
             base = rule.getLastTriggeredPrice();
@@ -96,8 +98,8 @@ public class AlertService {
         BigDecimal diff = current.getPrice().subtract(base);
         if (diff.abs().compareTo(rule.getThreshold()) >= 0) {
             String direction = diff.compareTo(BigDecimal.ZERO) >= 0 ? "上涨" : "下跌";
-            return String.format("[涨跌触发] %s: 金价%s %.2f 元/克 (变化 %+.2f 元/克，阈值 %.2f 元/克)",
-                    rule.getName(), direction, current.getPrice(), diff, rule.getThreshold());
+            return String.format("[涨跌触发] %s: 金价%s %.2f 元/克 (变化 %+.2f 元/克，阈值 %.2f 元/克) (%s)",
+                    rule.getName(), direction, current.getPrice(), diff, rule.getThreshold(), source);
         }
         return null;
     }
@@ -109,6 +111,7 @@ public class AlertService {
         }
         LocalDateTime since = LocalDateTime.now().minusDays(7);
         LocalDateTime before = LocalDateTime.now().minusMinutes(10);
+        String source = current.getSource();
         BigDecimal max = goldPriceRepository.findMaxPriceForSourceBetween(
                 current.getSource(), since, before);
         BigDecimal min = goldPriceRepository.findMinPriceForSourceBetween(
@@ -116,10 +119,10 @@ public class AlertService {
 
         List<String> msgs = new ArrayList<>();
         if (max != null && current.getPrice().compareTo(max) > 0) {
-            msgs.add(String.format("[极值触发] %s: 当前金价 %.2f 元/克，创7日新高", rule.getName(), current.getPrice()));
+            msgs.add(String.format("[极值触发] %s: 当前金价 %.2f 元/克，创7日新高 (%s)", rule.getName(), current.getPrice(), source));
         }
         if (min != null && current.getPrice().compareTo(min) < 0) {
-            msgs.add(String.format("[极值触发] %s: 当前金价 %.2f 元/克，创7日新低", rule.getName(), current.getPrice()));
+            msgs.add(String.format("[极值触发] %s: 当前金价 %.2f 元/克，创7日新低 (%s)", rule.getName(), current.getPrice(), source));
         }
         return msgs.isEmpty() ? null : String.join("\n", msgs);
     }
@@ -133,7 +136,7 @@ public class AlertService {
         LocalTime now = LocalTime.now();
         LocalTime target = LocalTime.parse(rule.getTime());
         if (now.isAfter(target) || now.equals(target)) {
-            return String.format("[定时报告] %s: 当前金价 %.2f 元/克", rule.getName(), current.getPrice());
+            return String.format("[定时报告] %s: 当前金价 %.2f 元/克 (%s)", rule.getName(), current.getPrice(), current.getSource());
         }
         return null;
     }

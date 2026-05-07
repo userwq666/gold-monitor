@@ -30,5 +30,5 @@ public class MailConfig {
     private boolean enabled = false;
 
     @Column(name = "preferred_source")
-    private String preferredSource = "工商银行如意金条";
+    private String preferredSource = "上海黄金交易所 Au99.99";
 }
