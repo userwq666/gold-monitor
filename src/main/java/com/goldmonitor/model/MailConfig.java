@@ -22,10 +22,10 @@ public class MailConfig {
     private int port = 587;
 
     @Column(nullable = false)
-    private String username;
+    private String username = "";
 
     @Column(nullable = false)
-    private String password;
+    private String password = "";
 
     private boolean enabled = false;
 
