@@ -1,0 +1,34 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:sqlite:${DB_PATH:./data/gold-monitor.db}
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 5
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+
+
+
+jwt:
+  secret: ${JWT_SECRET:PleaseChangeThisSecretKeyInProductionEnvironment2024}
+  expiration: 86400000
+
+crawler:
+  enabled: false
+  interval-minutes: 1
+  user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+  timeout-seconds: 15
+  retry-times: 3
+
+app:
+  data-retention-days: 90
+  admin-init-password: ${ADMIN_PASSWORD:admin123}
