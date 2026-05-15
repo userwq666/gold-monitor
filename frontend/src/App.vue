@@ -1,12 +1,12 @@
 <template>
   <div class="app">
     <nav class="nav" v-if="$route.meta.requiresAuth">
-      <strong>金价监控</strong>
+      <strong>GOLD MONITOR</strong>
       <router-link to="/" :class="{ active: $route.path === '/' }">看板</router-link>
       <router-link to="/admin" :class="{ active: $route.path === '/admin' }">管理</router-link>
       <span class="spacer"></span>
-      <span style="font-size:13px;color:#999;">{{ localStorageUsername }}</span>
-      <button class="btn btn-sm" @click="logout">退出</button>
+      <span style="font-size:12px;color:#4a5a7a;letter-spacing:0.5px;">{{ localStorageUsername }}</span>
+      <button class="btn btn-sm" @click="logout" style="background:rgba(255,71,87,0.1);color:#ff6b7a;border:1px solid rgba(255,71,87,0.2);">退出</button>
     </nav>
     <div class="content">
       <router-view />
